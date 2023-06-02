@@ -14,16 +14,17 @@ class DataIngestionConfig:
 
 class DataIngestion:
     def __init__(self):
-        self.ingestion_cofig=DataIngestionConfig()
+        self.ingestion_config=DataIngestionConfig()
 
     def initiate_data_ingestion(self):
         logging.info("Data ingestion started")
         
         try:
-            df=pd.read_csv(os.path.join('notebooks/data','gemstones.csv'))
+            df=pd.read_csv(os.path.join('notebooks/data','gemstone.csv'))
             logging.info("data read successfully")
-            os.mkdirs(os.path.dirname(self.ingestion_cofig.raw_data_path),exist_ok=True)
-            df.to_csv(self.ingestion_config.raw_data_path,index=False)
+            os.makedirs(os.path.dirname(self.ingestion_config.raw_data_path),exist_ok=True)
+            df.to_csv(self.ingestion_config.raw_data_path, index=False)
+
 
             logging.info('Raw data is created')
 

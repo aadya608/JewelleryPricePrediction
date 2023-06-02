@@ -14,12 +14,14 @@ import os
 from src.utils import save_obj
 @dataclass 
 class DataTransformationConfig:
-    preprocessor_obj_file_path: os.path.join('artifacts','preprocessor.pkl')
+    preprocessor_obj_file_path: str = os.path.join('artifacts', 'preprocessor.pkl')
+
 
 class DataTransformation:
-    def __init__(self):
-        self.data_transformation_config = DataTransformationConfig()
-     
+    def __init__(self, config):
+        self.data_transformation_config = config
+           
+           
     def get_data_transformation_object(self):
         try:
             logging.info("Initiating data transformation")
@@ -70,7 +72,7 @@ class DataTransformation:
             logging.info(f'Train Dataframe Head : \n{train_df.head().to_string()}')
             logging.info(f'Test Dataframe Head  : \n{test_df.head().to_string()}')
 
-            preprocessing_obj=self.get_data_transformation_object()
+            preprocessing_obj = self.get_data_transformation_object()
 
             target_column='price'
             drop_column=[target_column,'id']
@@ -89,8 +91,12 @@ class DataTransformation:
        
             logging.info("Applying preprocessing object on train and test data completed")
 
-            train_arr=np.c[input_feature_train_df_transformed_arr, np.array(target_train_df)]
-            test_arr=np.c[input_feature_test_df_transformed_arr, np.array(target_test_df)]
+            train_arr = np.concatenate((input_feature_train_df_transformed_arr, np.array(target_train_df.iloc[:input_feature_train_df_transformed_arr.shape[0]]).reshape(-1, 1)), axis=1)
+            test_arr = np.concatenate((input_feature_test_df_transformed_arr, np.array(target_test_df.iloc[:input_feature_test_df_transformed_arr.shape[0]]).reshape(-1, 1)), axis=1)
+
+
+            
+
             
             save_obj(
                 file_path=self.data_transformation_config.preprocessor_obj_file_path, 

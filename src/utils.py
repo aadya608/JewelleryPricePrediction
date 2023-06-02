@@ -22,19 +22,28 @@ def save_obj(file_path,obj):
         logging.error("Error while saving object: %s", e)
         raise CustomException("Error while saving object: %s", e)
     
-    def evaluate_model(X_train,y_train,X_test,y_test,models):
-        try:
-            report={}
-            for i in models:
-                model=list(models.values())[i]
-                model.fit(X_train,y_train)
+def model_evaluate(X_train, y_train, X_test, y_test, models):
+    try:
+        report = {}
+        for i in range(len(models)):
+            model = list(models.values())[i]
+            # Train model
+            model.fit(X_train,y_train)
 
-                y_pred=model.predict(X_test)
-                test_model_score = r2_score(y_test,y_test_pred)
+            
 
-                report[list(models.keys())[i]] =  test_model_score
+            # Predict Testing data
+            y_test_pred =model.predict(X_test)
 
-            return report
-        except Exception as e:
-            logging.info("Error while evaluating model: %s", e)
-            raise CustomException (e,sys)
+            # Get R2 scores for train and test data
+            #train_model_score = r2_score(ytrain,y_train_pred)
+            test_model_score = r2_score(y_test,y_test_pred)
+
+            report[list(models.keys())[i]] =  test_model_score
+
+        return report
+
+    except Exception as e:
+        logging.info('Exception occured during model training')
+        raise CustomException(e,sys)   
+ 
